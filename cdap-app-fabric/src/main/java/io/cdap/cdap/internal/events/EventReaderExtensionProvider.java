@@ -23,21 +23,21 @@ import io.cdap.cdap.common.lang.ClassPathResources;
 import io.cdap.cdap.common.lang.FilterClassLoader;
 import io.cdap.cdap.extension.AbstractExtensionLoader;
 import io.cdap.cdap.spi.events.EventReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link EventReaderExtensionProvider}
  *  which provides Event reader extension classes.
  * extending from {@link AbstractExtensionLoader}
  */
-public class EventReaderExtensionProvider extends AbstractExtensionLoader<String, EventReader> {
+public class EventReaderExtensionProvider extends AbstractExtensionLoader<String, EventReader>
+        implements EventReaderProvider {
 
   private static final Logger LOG = LoggerFactory.getLogger(EventReaderExtensionProvider.class);
   private static final Set<String> ALLOWED_RESOURCES = createAllowedResources();

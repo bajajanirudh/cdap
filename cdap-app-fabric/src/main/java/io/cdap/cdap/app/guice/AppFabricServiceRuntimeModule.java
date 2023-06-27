@@ -116,15 +116,18 @@ import io.cdap.cdap.internal.app.services.ScheduledRunRecordCorrectorService;
 import io.cdap.cdap.internal.app.store.DefaultStore;
 import io.cdap.cdap.internal.bootstrap.guice.BootstrapModules;
 import io.cdap.cdap.internal.capability.CapabilityModule;
+import io.cdap.cdap.internal.events.EventHandler;
+import io.cdap.cdap.internal.events.EventHandlerManager;
 import io.cdap.cdap.internal.events.EventPublishManager;
 import io.cdap.cdap.internal.events.EventPublisher;
 import io.cdap.cdap.internal.events.EventReaderExtensionProvider;
+import io.cdap.cdap.internal.events.EventReaderProvider;
 import io.cdap.cdap.internal.events.EventWriterExtensionProvider;
 import io.cdap.cdap.internal.events.EventWriterProvider;
 import io.cdap.cdap.internal.events.MetricsProvider;
 import io.cdap.cdap.internal.events.ProgramStatusEventPublisher;
-import io.cdap.cdap.internal.events.StartProgramEventHandler;
 import io.cdap.cdap.internal.events.SparkProgramStatusMetricsProvider;
+import io.cdap.cdap.internal.events.StartProgramEventHandler;
 import io.cdap.cdap.internal.pipeline.SynchronousPipelineFactory;
 import io.cdap.cdap.internal.profile.ProfileService;
 import io.cdap.cdap.internal.provision.ProvisionerModule;
@@ -398,9 +401,12 @@ public final class AppFabricServiceRuntimeModule extends RuntimeModule {
           Multibinder.newSetBinder(binder(), EventPublisher.class);
       eventPublishersBinder.addBinding().to(ProgramStatusEventPublisher.class);
       bind(EventPublishManager.class).in(Scopes.SINGLETON);
-      bind(StartProgramEventHandler.class).in(Scopes.SINGLETON);
-      bind(EventReaderExtensionProvider.class).in(Scopes.SINGLETON);
+      Multibinder<EventHandler> eventHandlersBinder =
+              Multibinder.newSetBinder(binder(), EventHandler.class);
+      eventHandlersBinder.addBinding().to(StartProgramEventHandler.class);
+      bind(EventHandlerManager.class).in(Scopes.SINGLETON);
       bind(EventWriterProvider.class).to(EventWriterExtensionProvider.class);
+      bind(EventReaderProvider.class).to(EventReaderExtensionProvider.class);
       bind(MetricsProvider.class).to(SparkProgramStatusMetricsProvider.class);
 
       Multibinder<HttpHandler> handlerBinder = Multibinder.newSetBinder(

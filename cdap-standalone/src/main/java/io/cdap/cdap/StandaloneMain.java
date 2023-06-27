@@ -69,6 +69,7 @@ import io.cdap.cdap.gateway.router.RouterModules;
 import io.cdap.cdap.internal.app.runtime.monitor.RuntimeServer;
 import io.cdap.cdap.internal.app.services.AppFabricServer;
 import io.cdap.cdap.internal.app.worker.sidecar.ArtifactLocalizerService;
+import io.cdap.cdap.internal.events.EventHandlerManager;
 import io.cdap.cdap.internal.events.EventPublishManager;
 import io.cdap.cdap.internal.events.StartProgramEventHandler;
 import io.cdap.cdap.logging.LoggingUtil;
@@ -156,7 +157,7 @@ public class StandaloneMain {
   private final RuntimeServer runtimeServer;
   private final ArtifactLocalizerService artifactLocalizerService;
   private final EventPublishManager eventPublishManager;
-  private final StartProgramEventHandler eventHandler;
+  private final EventHandlerManager eventHandlerManager;
 
   private ExternalAuthenticationServer externalAuthenticationServer;
 
@@ -189,7 +190,7 @@ public class StandaloneMain {
     cConf.setInt(Constants.ArtifactLocalizer.PORT, 0);
     artifactLocalizerService = injector.getInstance(ArtifactLocalizerService.class);
     eventPublishManager = injector.getInstance(EventPublishManager.class);
-    eventHandler = injector.getInstance(StartProgramEventHandler.class);
+    eventHandlerManager = injector.getInstance(EventHandlerManager.class);
 
     if (cConf.getBoolean(Constants.Transaction.TX_ENABLED)) {
       txService = injector.getInstance(InMemoryTransactionService.class);
@@ -304,7 +305,7 @@ public class StandaloneMain {
     secureStoreService.startAndWait();
     supportBundleInternalService.startAndWait();
     eventPublishManager.startAndWait();
-    eventHandler.startAndWait();
+    eventHandlerManager.startAndWait();
 
     String protocol = sslEnabled ? "https" : "http";
     int dashboardPort = sslEnabled
@@ -343,7 +344,7 @@ public class StandaloneMain {
       previewHttpServer.stopAndWait();
       artifactLocalizerService.stopAndWait();
       eventPublishManager.stopAndWait();
-      eventHandler.stopAndWait();
+      eventHandlerManager.stopAndWait();
       // app fabric will also stop all programs
       appFabricServer.stopAndWait();
       runtimeServer.stopAndWait();

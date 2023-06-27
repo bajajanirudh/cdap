@@ -2208,6 +2208,8 @@ public final class Constants {
 
     public static final String PROGRAM_STATUS_POLL_INTERVAL_SECONDS = "event.program.status.poll.interval.seconds";
 
+    public static final String START_PROGRAM_EVENT_READER_POLL_DELAY = "event.startprogram.poll.delay.seconds";
+
     public static final String PROGRAM_STATUS_FETCH_SIZE = "event.program.status.fetch.size";
 
     public static final String INSTANCE_NAME = "event.instance.name";
