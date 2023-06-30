@@ -84,8 +84,8 @@ public class StartProgramEventHandler extends EventHandler {
    * @throws RuntimeException if starting program fails
    */
   private void startProgram(StartProgramEvent event) {
-    try {
       StartProgramEventDetails eventDetails = event.getEventDetails();
+    try {
       ProgramType programType = ProgramType.valueOfCategoryName(eventDetails.getProgramType());
       ProgramReference programReference = new ProgramReference(eventDetails.getNamespaceId(),
               eventDetails.getAppId(), programType,
