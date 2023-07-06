@@ -333,7 +333,7 @@ public class KubeMasterEnvironment implements MasterEnvironment {
     String resourcePrefix = "cdap-" + instanceName + "-";
     discoveryService = new KubeDiscoveryService(cdapInstallNamespace, "cdap-" + instanceName + "-",
         podLabels,
-        podInfo.getOwnerReferences(), apiClientFactory);
+        podInfo.getOwnerReferences(), apiClientFactory, conf);
 
     // Optionally creates the pod killer task
     String podKillerSelector = conf.get(POD_KILLER_SELECTOR);
