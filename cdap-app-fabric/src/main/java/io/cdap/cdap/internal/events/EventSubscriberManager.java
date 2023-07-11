@@ -26,19 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * EventReaderHandlerManager is responsible for starting all the event reader handler threads.
+ * EventSubscriberManager is responsible for starting all the event subscriber threads.
  */
-public class EventReaderHandlerManager extends AbstractIdleService {
+public class EventSubscriberManager extends AbstractIdleService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EventReaderHandlerManager.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EventSubscriberManager.class);
 
   private final boolean enabled;
-  private final Set<EventReaderHandler> eventReaderHandlers;
+  private final Set<EventSubscriber> eventSubscribers;
 
   @Inject
-  EventReaderHandlerManager(CConfiguration cConf, Set<EventReaderHandler> eventReaderHandlers) {
+  EventSubscriberManager(CConfiguration cConf, Set<EventSubscriber> eventSubscribers) {
     this.enabled = Feature.EVENT_READER.isEnabled(new DefaultFeatureFlagsProvider(cConf));
-    this.eventReaderHandlers = eventReaderHandlers;
+    this.eventSubscribers = eventSubscribers;
   }
 
   @Override
@@ -46,16 +46,16 @@ public class EventReaderHandlerManager extends AbstractIdleService {
     if (!enabled) {
       return; // If not enabled, don't start
     }
-    eventReaderHandlers.forEach(eventReaderHandler -> {
-      // Loading the event writers from provider
-      // Initialize the event publisher with all the event writers provided by provider
-      if (eventReaderHandler.initialize()) {
-        eventReaderHandler.startAndWait();
-        LOG.info("Successfully initialized eventReaderHandler: {}",
-                eventReaderHandler.getClass().getSimpleName());
+    eventSubscribers.forEach(eventSubscriber -> {
+      // Loading the event readers from provider
+      // Initialize the event subscribers with all the event readers provided by provider
+      if (eventSubscriber.initialize()) {
+        eventSubscriber.startAndWait();
+        LOG.info("Successfully initialized eventSubscriber: {}",
+                eventSubscriber.getClass().getSimpleName());
       } else {
-        LOG.error("Failed to initialize eventReaderHandler: {}",
-                eventReaderHandler.getClass().getSimpleName());
+        LOG.error("Failed to initialize eventSubscriber: {}",
+                eventSubscriber.getClass().getSimpleName());
       }
     });
   }
@@ -65,8 +65,8 @@ public class EventReaderHandlerManager extends AbstractIdleService {
     if (!enabled) {
       return; // If not enabled, don't shut down
     }
-    eventReaderHandlers.forEach(eventReaderHandler -> {
-      eventReaderHandler.stopAndWait();
+    eventSubscribers.forEach(eventSubscriber -> {
+      eventSubscriber.stopAndWait();
     });
   }
 }
