@@ -19,9 +19,10 @@ package io.cdap.cdap.internal.events;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
 /**
- * Abstract class for an event Handler. Each EventHandler will receive and process incoming events
+ * Abstract class for an event reader Handler.
+ * Each EventReaderHandler will receive and process incoming events.
  */
-public abstract class EventHandler extends AbstractScheduledService {
+public abstract class EventReaderHandler extends AbstractScheduledService {
 
   /**
    * Initialize this handler.

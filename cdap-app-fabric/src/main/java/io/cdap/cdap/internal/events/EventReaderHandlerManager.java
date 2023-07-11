@@ -26,19 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * EventHandlerManager is responsible for starting all the event handler threads.
+ * EventReaderHandlerManager is responsible for starting all the event reader handler threads.
  */
-public class EventHandlerManager extends AbstractIdleService {
+public class EventReaderHandlerManager extends AbstractIdleService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EventHandlerManager.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EventReaderHandlerManager.class);
 
   private final boolean enabled;
-  private final Set<EventHandler> eventHandlers;
+  private final Set<EventReaderHandler> eventReaderHandlers;
 
   @Inject
-  EventHandlerManager(CConfiguration cConf, Set<EventHandler> eventHandlers) {
+  EventReaderHandlerManager(CConfiguration cConf, Set<EventReaderHandler> eventReaderHandlers) {
     this.enabled = Feature.EVENT_READER.isEnabled(new DefaultFeatureFlagsProvider(cConf));
-    this.eventHandlers = eventHandlers;
+    this.eventReaderHandlers = eventReaderHandlers;
   }
 
   @Override
@@ -46,16 +46,16 @@ public class EventHandlerManager extends AbstractIdleService {
     if (!enabled) {
       return; // If not enabled, don't start
     }
-    eventHandlers.forEach(eventHandler -> {
+    eventReaderHandlers.forEach(eventReaderHandler -> {
       // Loading the event writers from provider
       // Initialize the event publisher with all the event writers provided by provider
-      if (eventHandler.initialize()) {
-        eventHandler.startAndWait();
+      if (eventReaderHandler.initialize()) {
+        eventReaderHandler.startAndWait();
         LOG.info("Successfully initialized eventReaderHandler: {}",
-                eventHandler.getClass().getSimpleName());
+                eventReaderHandler.getClass().getSimpleName());
       } else {
         LOG.error("Failed to initialize eventReaderHandler: {}",
-                eventHandler.getClass().getSimpleName());
+                eventReaderHandler.getClass().getSimpleName());
       }
     });
   }
@@ -65,8 +65,8 @@ public class EventHandlerManager extends AbstractIdleService {
     if (!enabled) {
       return; // If not enabled, don't shut down
     }
-    eventHandlers.forEach(eventHandler -> {
-      eventHandler.stopAndWait();
+    eventReaderHandlers.forEach(eventReaderHandler -> {
+      eventReaderHandler.stopAndWait();
     });
   }
 }

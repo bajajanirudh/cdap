@@ -118,10 +118,10 @@ import io.cdap.cdap.internal.bootstrap.guice.BootstrapModules;
 import io.cdap.cdap.internal.capability.CapabilityModule;
 import io.cdap.cdap.internal.credential.handler.CredentialProviderHttpHandler;
 import io.cdap.cdap.internal.credential.handler.CredentialProviderHttpHandlerInternal;
-import io.cdap.cdap.internal.events.EventHandler;
-import io.cdap.cdap.internal.events.EventHandlerManager;
 import io.cdap.cdap.internal.events.EventPublishManager;
 import io.cdap.cdap.internal.events.EventPublisher;
+import io.cdap.cdap.internal.events.EventReaderHandler;
+import io.cdap.cdap.internal.events.EventReaderHandlerManager;
 import io.cdap.cdap.internal.events.EventWriterExtensionProvider;
 import io.cdap.cdap.internal.events.EventWriterProvider;
 import io.cdap.cdap.internal.events.MetricsProvider;
@@ -400,9 +400,9 @@ public final class AppFabricServiceRuntimeModule extends RuntimeModule {
           Multibinder.newSetBinder(binder(), EventPublisher.class);
       eventPublishersBinder.addBinding().to(ProgramStatusEventPublisher.class);
       bind(EventPublishManager.class).in(Scopes.SINGLETON);
-      Multibinder<EventHandler> eventHandlerBinder =
-              Multibinder.newSetBinder(binder(), EventHandler.class);
-      bind(EventHandlerManager.class).in(Scopes.SINGLETON);
+      Multibinder<EventReaderHandler> eventHandlerBinder =
+              Multibinder.newSetBinder(binder(), EventReaderHandler.class);
+      bind(EventReaderHandlerManager.class).in(Scopes.SINGLETON);
       bind(EventWriterProvider.class).to(EventWriterExtensionProvider.class);
       bind(MetricsProvider.class).to(SparkProgramStatusMetricsProvider.class);
 
