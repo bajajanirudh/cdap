@@ -273,7 +273,6 @@
           <groupId>io.cdap.cdap</groupId>
           <artifactId>cdap-event-reader-spi</artifactId>
           <version>${project.version}</version>
-          <scope>compile</scope>
       </dependency>
   </dependencies>
 
