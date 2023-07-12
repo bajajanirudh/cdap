@@ -2208,7 +2208,6 @@ public final class Constants {
 
     public static final String PROGRAM_STATUS_POLL_INTERVAL_SECONDS = "event.program.status.poll.interval.seconds";
 
-
     public static final String PROGRAM_STATUS_FETCH_SIZE = "event.program.status.fetch.size";
 
     public static final String INSTANCE_NAME = "event.instance.name";
@@ -2216,10 +2215,13 @@ public final class Constants {
     public static final String PROJECT_NAME = "event.project.name";
 
     public static final String EVENTS_WRITER_PREFIX = "event.writer";
+
     public static final String EVENTS_WRITER_EXTENSIONS_DIR = "events.writer.extensions.dir";
+
     public static final String EVENTS_WRITER_EXTENSIONS_ENABLED_LIST = "events.writer.extensions.enabled.list";
 
     public static final String EVENTS_READER_PREFIX = "event.reader";
+
     public static final String EVENTS_READER_ACK_BUFFER = "events.reader.buffer";
   }
 

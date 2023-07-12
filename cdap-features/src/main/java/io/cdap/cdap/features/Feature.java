@@ -72,7 +72,9 @@ public enum Feature {
   }
 
   /**
-   * @return string that identifies the feature flag.
+   * Retrieve the string that identifies the feature flag.
+   *
+   * @return feature flag string
    */
   public String getFeatureFlagString() {
     return featureFlagString;

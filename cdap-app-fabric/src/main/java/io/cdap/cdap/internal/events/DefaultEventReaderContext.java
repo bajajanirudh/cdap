@@ -29,7 +29,7 @@ public class DefaultEventReaderContext implements EventReaderContext {
   /**
    * Construct the default Event reader context.
    *
-   * @param prefix prefix for specific event reader (e.g start.<simpleclassname>)
+   * @param prefix prefix for specific event reader (e.g start.simpleclassname)
    * @param cConf        An instance of an injected ${@link CConfiguration}.
    */
   DefaultEventReaderContext(String prefix, CConfiguration cConf) {
