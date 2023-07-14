@@ -15,9 +15,9 @@
 package io.cdap.cdap.internal.app.worker.sidecar;
 
 import com.google.inject.Inject;
-import io.cdap.cdap.api.artifact.ApplicationClass;
 import io.cdap.cdap.api.artifact.ArtifactInfo;
 import io.cdap.cdap.api.artifact.ArtifactManager;
+import io.cdap.cdap.api.artifact.ArtifactVersion;
 import io.cdap.cdap.common.ArtifactNotFoundException;
 import io.cdap.cdap.common.conf.CConfiguration;
 import io.cdap.cdap.common.conf.Constants;
@@ -37,6 +37,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,28 +189,39 @@ public class ArtifactLocalizer extends AbstractArtifactLocalizer {
         .toFile();
   }
 
+  /**
+   * Preloads the latest version of selected artifacts.
+   *
+   * @param artifactNames list of artifact names to be preloaded in cache
+   * @throws ArtifactNotFoundException if we couldnot find any artifacts for given name
+   */
   public void preloadArtifacts(Set<String> artifactNames)
       throws IOException, ArtifactNotFoundException {
     ArtifactManager artifactManager = artifactManagerFactory.create(
         NamespaceId.SYSTEM,
         RetryStrategies.fromConfiguration(cConf, Constants.Service.TASK_WORKER + "."));
 
-    for (ArtifactInfo info : artifactManager.listArtifacts()) {
-      if (artifactNames.contains(info.getName()) && info.getParents().isEmpty()) {
-        String className = info.getClasses().getApps().stream()
-            .findFirst()
-            .map(ApplicationClass::getClassName)
-            .orElse(null);
 
-        LOG.info("Preloading artifact {}:{}-{}", info.getScope(), info.getName(),
-            info.getVersion());
+    List<ArtifactInfo> allArtifacts = artifactManager.listArtifacts();
+    for (String artifactName : artifactNames) {
+      Optional<ArtifactInfo> latestArtifactInfo = allArtifacts.stream()
+          .filter(artifactInfo -> artifactInfo.getName().equals(artifactName))
+          .max(Comparator.comparing(artifactInfo -> new ArtifactVersion(artifactInfo.getVersion())));
 
-        ArtifactId artifactId = NamespaceId.SYSTEM.artifact(info.getName(), info.getVersion());
+      if (latestArtifactInfo.isPresent()) {
+        LOG.info("Preloading artifact {}:{}-{}", latestArtifactInfo.get().getScope(),
+            latestArtifactInfo.get().getName(),
+            latestArtifactInfo.get().getVersion());
+
+        ArtifactId artifactId = NamespaceId.SYSTEM.artifact(latestArtifactInfo.get().getName(),
+            latestArtifactInfo.get().getVersion());
         try {
           fetchArtifact(artifactId);
         } catch (Exception e) {
           LOG.debug("Failed to preload artifact {}", artifactId);
         }
+      } else {
+        throw new ArtifactNotFoundException(NamespaceId.SYSTEM, artifactName);
       }
     }
   }
